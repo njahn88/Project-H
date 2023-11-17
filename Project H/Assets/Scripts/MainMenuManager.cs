@@ -42,7 +42,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void StartGame()
     {
-
+        InputManager.Instance.DisableAllInputs();
     }
 
     public void Settings()

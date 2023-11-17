@@ -60,4 +60,14 @@ public class InputManager : MonoBehaviour
             _inMenus = !_inMenus;
         }
     }
+
+    public void DisableAllInputs()
+    {
+        _playerInput.Disable();
+    }
+
+    public void EnableAllInputs()
+    {
+        _playerInput.Enable();
+    }
 }
