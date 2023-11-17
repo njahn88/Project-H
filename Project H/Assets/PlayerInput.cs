@@ -106,7 +106,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""name"": ""LeftStick"",
                     ""id"": ""9ff79cf2-3f73-49b0-8023-cb0db881a551"",
                     ""path"": ""2DVector"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Movement"",
