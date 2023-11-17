@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneMangerTool : MonoBehaviour
 {
     public static SceneMangerTool Instance;
+
+    [SerializeField]
+    private float _fadeSpeed;
 
     private void Awake()
     {
@@ -18,10 +22,13 @@ public class SceneMangerTool : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void LoadScene(string sceneName)
+    public async void LoadScene(string sceneName)
     {
         InputManager.Instance.DisableAllInputs();
+        await UiManager.Instance.FadeIn(_fadeSpeed);
         SceneManager.LoadScene(sceneName);
+        await UiManager.Instance.FadeOut(_fadeSpeed);
         InputManager.Instance.EnableAllInputs();
     }
+
 }

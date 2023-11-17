@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
 {
+    public static event Action OnGameStarted;
     [SerializeField]
     private Button[] _menuButtons;
 
@@ -43,6 +45,7 @@ public class MainMenuManager : MonoBehaviour
     public void StartGame()
     {
         SceneMangerTool.Instance.LoadScene("SampleScene");
+        OnGameStarted?.Invoke();
     }
 
     public void Settings()
