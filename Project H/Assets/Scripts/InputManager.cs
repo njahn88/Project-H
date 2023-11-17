@@ -11,6 +11,8 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance;
     private PlayerInput _playerInput;
 
+    private bool _inMenus = false;
+
     private void Awake()
     {
         if(Instance != null)
@@ -32,21 +34,14 @@ public class InputManager : MonoBehaviour
     private void SetupStartingInput()
     {
         _playerInput.Enable();
-        _playerInput.GamePlay.Disable();
         SetupGameplayConnections();
-        SetupMenuConnections();
     }
 
     //Subscribes functions to corresponding events in Gameplay InputAction
     private void SetupGameplayConnections()
     {
         _playerInput.GamePlay.Movement.performed += OnMovement;
-        _playerInput.GamePlay.Pause.performed += OnPauseFromGamePlay;
-    }
-
-    private void SetupMenuConnections()
-    {
-        _playerInput.Menus.UnPause.performed += OnPauseFromMenus;
+        _playerInput.GamePlay.Pause.performed += OnPause;
     }
 
     //Fires event for player movement sending a Vector2
@@ -57,24 +52,12 @@ public class InputManager : MonoBehaviour
     }
 
     //Fires event for player pausing game, switches to Menus input
-    public void OnPauseFromGamePlay(InputAction.CallbackContext context)
+    public void OnPause(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            OnPauseInput?.Invoke(true);
-            _playerInput.GamePlay.Disable();
-            _playerInput.Menus.Enable();
-        }
-    }
-
-    //Fires event for player pausing game, switches to Gameplay input
-    private void OnPauseFromMenus(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            OnPauseInput?.Invoke(false);
-            _playerInput.GamePlay.Enable();
-            _playerInput.Menus.Disable();
+            OnPauseInput?.Invoke(_inMenus);
+            _inMenus = !_inMenus;
         }
     }
 }
