@@ -28,7 +28,7 @@ public class InputManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _playerInput.Disable();
+        //_playerInput.Disable();
     }
 
     private void SetupStartingInput()
