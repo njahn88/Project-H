@@ -21,14 +21,17 @@ public class SceneMangerTool : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-
+    /// <summary>
+    /// Handles the camera fading in and out, loading the scene with paramater name, and handles inputs 
+    /// </summary>
+    /// <param name="sceneName"></param>
     public async void LoadScene(string sceneName)
     {
         InputManager.Instance.DisableAllInputs();
         await UiManager.Instance.FadeIn(_fadeSpeed);
         SceneManager.LoadScene(sceneName);
         await UiManager.Instance.FadeOut(_fadeSpeed);
-        InputManager.Instance.EnableAllInputs();
+        InputManager.Instance.EnableGamePlayInputs();
     }
 
 }
