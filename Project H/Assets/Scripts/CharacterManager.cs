@@ -28,6 +28,10 @@ public class CharacterManager : MonoBehaviour
 
     private void Update()
     {
+        if (_moveDirection != Vector3.zero)
+        {
+            gameObject.transform.forward = _moveDirection;
+        }
         _characterController.Move(_moveDirection);
     }
 
