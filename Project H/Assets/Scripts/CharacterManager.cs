@@ -7,9 +7,10 @@ public class CharacterManager : MonoBehaviour
 {
     private CharacterController _characterController;
 
-    private Vector3 _moveDirection;
+    private Vector2 _moveDirection;
 
     [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private float _rotateSpeed = 10f;
 
     private void OnEnable()
     {
@@ -28,16 +29,25 @@ public class CharacterManager : MonoBehaviour
 
     private void Update()
     {
-        if (_moveDirection != Vector3.zero)
+        Vector3 turnedInputs = CameraBasedAngle();
+        if (_moveDirection != Vector2.zero)
         {
-            gameObject.transform.forward = _moveDirection;
+            gameObject.transform.forward = Vector3.Slerp(transform.forward, turnedInputs, Time.deltaTime * _rotateSpeed);
         }
-        _characterController.Move(_moveDirection);
+        _characterController.Move(turnedInputs * _moveSpeed * Time.deltaTime);
+    }
+
+    //Adds the given rotation of the camera into the movement of the player
+    private Vector3 CameraBasedAngle()
+    {
+        float cameraAngle = Camera.main.transform.eulerAngles.y;
+        Vector3 moveDir = new Vector3(_moveDirection.x, 0, _moveDirection.y);
+        return Quaternion.Euler(0, cameraAngle, 0) * moveDir;
     }
 
     //Gets the movement vector from InputManager and moves character
     private void HandleMovement(Vector2 moveDirection)
     {
-        _moveDirection = new Vector3(moveDirection.x, 0, moveDirection.y) * Time.deltaTime * _moveSpeed;
+        _moveDirection = moveDirection;
     }
 }
