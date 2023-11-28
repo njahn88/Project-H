@@ -36,7 +36,8 @@ public class CharacterManager : MonoBehaviour
         MovePlayer();
         PlayerGravity();
     }
-
+    #region Update Functions
+    //Moves the player based on the angle of the camera 
     private void MovePlayer()
     {
         Vector3 turnedInputs = CameraBasedAngle();
@@ -47,21 +48,17 @@ public class CharacterManager : MonoBehaviour
         _characterController.Move(turnedInputs * _moveSpeed * Time.deltaTime);
     }
 
+    //Determines if the player should be falling or not
     private void PlayerGravity()
     {
         _playerVelocity = Vector3.zero;
-        if (_characterController.isGrounded)
-        {
-            _playerVelocity.y = 0;
-        }
-        else
+        if (!_characterController.isGrounded)
         {
             _playerVelocity.y -= _gravity;
+            _characterController.Move(_playerVelocity * Time.deltaTime);
         }
-        Debug.Log(_playerVelocity);
-        _characterController.Move(_playerVelocity * Time.deltaTime);
     }
-
+    #endregion
     //Adds the given rotation of the camera into the movement of the player
     private Vector3 CameraBasedAngle()
     {
