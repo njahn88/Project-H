@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CharacterManager : MonoBehaviour
@@ -13,6 +14,7 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] private float _rotateSpeed = 10f;
 
     private const float _gravity = 9.8f;
+    private Vector3 _playerVelocity;
 
     private void OnEnable()
     {
@@ -31,12 +33,33 @@ public class CharacterManager : MonoBehaviour
 
     private void Update()
     {
+        MovePlayer();
+        PlayerGravity();
+    }
+
+    private void MovePlayer()
+    {
         Vector3 turnedInputs = CameraBasedAngle();
         if (_moveDirection != Vector2.zero)
         {
             gameObject.transform.forward = Vector3.Slerp(transform.forward, turnedInputs, Time.deltaTime * _rotateSpeed);
         }
         _characterController.Move(turnedInputs * _moveSpeed * Time.deltaTime);
+    }
+
+    private void PlayerGravity()
+    {
+        _playerVelocity = Vector3.zero;
+        if (_characterController.isGrounded)
+        {
+            _playerVelocity.y = 0;
+        }
+        else
+        {
+            _playerVelocity.y -= _gravity;
+        }
+        Debug.Log(_playerVelocity);
+        _characterController.Move(_playerVelocity * Time.deltaTime);
     }
 
     //Adds the given rotation of the camera into the movement of the player
