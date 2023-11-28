@@ -12,6 +12,8 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _rotateSpeed = 10f;
 
+    private const float _gravity = 9.8f;
+
     private void OnEnable()
     {
         InputManager.OnMovementInput += HandleMovement;
