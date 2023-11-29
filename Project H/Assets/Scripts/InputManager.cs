@@ -8,6 +8,7 @@ public class InputManager : MonoBehaviour, PlayerInput.IGamePlayActions, PlayerI
 {
     public static event Action<Vector2> OnMovementInput;
     public static event Action<bool> OnPauseInput;
+    public static event Action<bool> OnLockInput;
     public static InputManager Instance;
     private PlayerInput _playerInput;
 
@@ -80,8 +81,22 @@ public class InputManager : MonoBehaviour, PlayerInput.IGamePlayActions, PlayerI
     {
         if (context.phase == InputActionPhase.Performed) OnMovementInput?.Invoke(context.ReadValue<Vector2>());
     }
-    #endregion
-    public void DisableAllInputs()
+
+    public void OnLock(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {
+            OnLockInput?.Invoke(true);
+            Debug.Log("Shift pressed");
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            OnLockInput?.Invoke(false);
+            Debug.Log("Shift released");
+        }
+    }
+        #endregion
+        public void DisableAllInputs()
     {
         _playerInput.Disable();
     }

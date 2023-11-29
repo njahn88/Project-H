@@ -14,11 +14,13 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] private float _rotateSpeed = 10f;
 
     private const float _gravity = 9.8f;
+    private bool _isLocked = false;
     private Vector3 _playerVelocity;
 
     private void OnEnable()
     {
         InputManager.OnMovementInput += HandleMovement;
+        InputManager.OnLockInput += ToggleTargetLock;
     }
 
     private void Start()
@@ -29,6 +31,7 @@ public class CharacterManager : MonoBehaviour
     private void OnDisable()
     {
         InputManager.OnMovementInput -= HandleMovement;
+        InputManager.OnLockInput -= ToggleTargetLock;
     }
 
     private void Update()
@@ -41,7 +44,7 @@ public class CharacterManager : MonoBehaviour
     private void MovePlayer()
     {
         Vector3 turnedInputs = CameraBasedAngle();
-        if (_moveDirection != Vector2.zero)
+        if (_moveDirection != Vector2.zero && !_isLocked)
         {
             gameObject.transform.forward = Vector3.Slerp(transform.forward, turnedInputs, Time.deltaTime * _rotateSpeed);
         }
@@ -71,5 +74,10 @@ public class CharacterManager : MonoBehaviour
     private void HandleMovement(Vector2 moveDirection)
     {
         _moveDirection = moveDirection;
+    }
+
+    private void ToggleTargetLock(bool isLocked)
+    {
+        _isLocked = isLocked;
     }
 }
