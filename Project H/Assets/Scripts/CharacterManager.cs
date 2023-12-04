@@ -15,14 +15,18 @@ public class CharacterManager : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _rotateSpeed = 10f;
 
+    private IInteractable _interactable;
+
     private const float _gravity = 9.8f;
     private bool _isLocked = false;
+    private bool _talking = false;
     private Vector3 _playerVelocity;
 
     private void OnEnable()
     {
         InputManager.OnMovementInput += HandleMovement;
         InputManager.OnLockInput += ToggleTargetLock;
+        InputManager.OnInteractPressed += Interact;
         LockManager.NoTargets += DisableLock;
     }
 
@@ -35,11 +39,33 @@ public class CharacterManager : MonoBehaviour
     {
         InputManager.OnMovementInput -= HandleMovement;
         InputManager.OnLockInput -= ToggleTargetLock;
+        InputManager.OnInteractPressed -= Interact;
         LockManager.NoTargets -= DisableLock;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.TryGetComponent<IInteractable>(out IInteractable interactable))
+        {
+            Debug.Log("Interactable found");
+            _interactable = interactable;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.TryGetComponent<IInteractable>(out IInteractable interactable))
+        {
+            _interactable = null;
+        }
     }
 
     private void Update()
     {
+        if (_talking)
+        {
+            return;
+        }
         MovePlayer();
         PlayerGravity();
     }
@@ -87,6 +113,15 @@ public class CharacterManager : MonoBehaviour
         _moveDirection = moveDirection;
     }
 
+    //Interacts with object if one is available
+    private void Interact()
+    {
+        if(_interactable != null)
+        {
+            _interactable.Interact(this);
+        }
+    }
+
     //Toggles targeting and finds the closest target if there is one present
     private void ToggleTargetLock(bool isLocked)
     {
@@ -97,5 +132,27 @@ public class CharacterManager : MonoBehaviour
     private void DisableLock()
     {
         _isLocked = false;
+    }
+
+    //Stops character and rotates character towards location
+    public void StopAndRotate(Vector3 rotateTowards)
+    {
+        _talking = true;
+        StartCoroutine(Rotate(rotateTowards));
+    }
+
+    private IEnumerator Rotate(Vector3 rotateTowards)
+    {
+        Vector3 targetDirection = rotateTowards - transform.position;
+        targetDirection.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+        float totalTime = 0;
+        float rotateTime = 1f;
+        while(totalTime < rotateTime)
+        {
+            gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotateSpeed);
+            totalTime += Time.deltaTime;
+            yield return null;
+        }
     }
 }
