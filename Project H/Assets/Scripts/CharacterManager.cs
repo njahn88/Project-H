@@ -7,8 +7,10 @@ using UnityEngine;
 public class CharacterManager : MonoBehaviour
 {
     private CharacterController _characterController;
+    [SerializeField] private LockManager _lockManager;
 
     private Vector2 _moveDirection;
+    private GameObject _closestTarget;
 
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _rotateSpeed = 10f;
@@ -21,6 +23,7 @@ public class CharacterManager : MonoBehaviour
     {
         InputManager.OnMovementInput += HandleMovement;
         InputManager.OnLockInput += ToggleTargetLock;
+        LockManager.NoTargets += DisableLock;
     }
 
     private void Start()
@@ -32,6 +35,7 @@ public class CharacterManager : MonoBehaviour
     {
         InputManager.OnMovementInput -= HandleMovement;
         InputManager.OnLockInput -= ToggleTargetLock;
+        LockManager.NoTargets -= DisableLock;
     }
 
     private void Update()
@@ -47,6 +51,13 @@ public class CharacterManager : MonoBehaviour
         if (_moveDirection != Vector2.zero && !_isLocked)
         {
             gameObject.transform.forward = Vector3.Slerp(transform.forward, turnedInputs, Time.deltaTime * _rotateSpeed);
+        }
+        if(_isLocked && _closestTarget != null)
+        {
+            Vector3 targetDirection = _closestTarget.transform.position - transform.position;
+            targetDirection.y = 0;
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotateSpeed);
         }
         _characterController.Move(turnedInputs * _moveSpeed * Time.deltaTime);
     }
@@ -76,8 +87,15 @@ public class CharacterManager : MonoBehaviour
         _moveDirection = moveDirection;
     }
 
+    //Toggles targeting and finds the closest target if there is one present
     private void ToggleTargetLock(bool isLocked)
     {
         _isLocked = isLocked;
+        _closestTarget = _lockManager.FindClosestTarget();
+    }
+
+    private void DisableLock()
+    {
+        _isLocked = false;
     }
 }
