@@ -141,6 +141,12 @@ public class CharacterManager : MonoBehaviour
         StartCoroutine(Rotate(rotateTowards));
     }
 
+    //Makes it so player is no longer is dialogue state
+    public void DoneTalking()
+    {
+        _talking = false;
+    }
+
     private IEnumerator Rotate(Vector3 rotateTowards)
     {
         Vector3 targetDirection = rotateTowards - transform.position;
