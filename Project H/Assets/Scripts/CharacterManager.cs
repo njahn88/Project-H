@@ -161,4 +161,28 @@ public class CharacterManager : MonoBehaviour
             yield return null;
         }
     }
+
+    //Used for LoadingZones
+    public void StopAndMoveToPoint(Vector3 moveTowards)
+    {
+        _talking = true;
+        StartCoroutine(RotateAndMovetoPoint(moveTowards));
+    }
+
+    private IEnumerator RotateAndMovetoPoint(Vector3 moveTowards)
+    {
+        Vector3 targetDirection = moveTowards - transform.position;
+        targetDirection.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+        float totalTime = 0;
+        float rotateTime = 1f;
+        SceneMangerTool.Instance.LoadScene("TestLoad");
+        while (totalTime < rotateTime)
+        {
+            gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotateSpeed);
+            gameObject.transform.position = Vector3.MoveTowards(transform.position, moveTowards, Time.deltaTime * _rotateSpeed);
+            totalTime += Time.deltaTime;
+            yield return null;
+        }
+    }
 }
