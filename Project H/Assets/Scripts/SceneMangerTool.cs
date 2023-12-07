@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,6 +32,18 @@ public class SceneMangerTool : MonoBehaviour
         SceneManager.LoadScene(sceneName);
         await UiManager.Instance.FadeOut(_fadeSpeed);
         InputManager.Instance.EnableGamePlayInputs();
+    }
+
+    //Used to transition camera and move character to position (used for doors)
+    public async void MoveInScene(CharacterManager characterManager, Vector3 locationToMove)
+    {
+        InputManager.Instance.DisableAllInputs();
+        await UiManager.Instance.FadeIn(_fadeSpeed);
+        characterManager.MoveToPoint(locationToMove);
+        await Task.Delay(1000);
+        await UiManager.Instance.FadeOut(_fadeSpeed);
+        InputManager.Instance.EnableGamePlayInputs();
+        characterManager.DoneTalking();
     }
 
 }

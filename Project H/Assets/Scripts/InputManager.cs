@@ -124,6 +124,7 @@ public class InputManager : MonoBehaviour, PlayerInput.IGamePlayActions, PlayerI
 
     public void EnableGamePlayInputs()
     {
+        _playerInput.Enable();
         _playerInput.GamePlay.Enable();
         _playerInput.Menus.Disable();
     }

@@ -169,6 +169,13 @@ public class CharacterManager : MonoBehaviour
         StartCoroutine(RotateAndMovetoPoint(moveTowards));
     }
 
+    //Used for doors
+    public void DoorTeleport(Vector3 moveTowards, Vector3 positionToTeleport)
+    {
+        _talking = true;
+        StartCoroutine(OpenDoor(moveTowards, positionToTeleport));
+    }
+
     private IEnumerator RotateAndMovetoPoint(Vector3 moveTowards)
     {
         Vector3 targetDirection = moveTowards - transform.position;
@@ -184,5 +191,28 @@ public class CharacterManager : MonoBehaviour
             totalTime += Time.deltaTime;
             yield return null;
         }
+    }
+
+    public IEnumerator OpenDoor(Vector3 doorPosition, Vector3 positionToTeleport)
+    {
+        Vector3 targetDirection = doorPosition - transform.position;
+        targetDirection.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+        float totalTime = 0;
+        float rotateTime = 1f;
+        SceneMangerTool.Instance.MoveInScene(this, positionToTeleport);
+        while (totalTime < rotateTime)
+        {
+            gameObject.transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotateSpeed);
+            gameObject.transform.position = Vector3.MoveTowards(transform.position, doorPosition, Time.deltaTime * _rotateSpeed);
+            totalTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    //Teleports character used for doors mainly
+    public void MoveToPoint(Vector3 moveTo)
+    {
+        transform.position = moveTo;
     }
 }
